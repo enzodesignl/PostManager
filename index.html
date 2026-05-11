@@ -3,8 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PostManager</title>
+<title>Carrosselo</title>
 <style>
+  .logo-wrap{
+display:flex;
+align-items:center;
+gap:12px;
+text-decoration:none;
+font-weight:900;
+font-size:28px;
+letter-spacing:-0.06em;
+color:#111;
+}
+
+.logo-icon{
+width:44px;
+height:44px;
+border-radius:14px;
+background:linear-gradient(135deg,#ff6a00,#ff9a3c);
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:900;
+font-size:24px;
+box-shadow:0 10px 30px rgba(255,106,0,.25);
+text-transform:lowercase;
+}
+
+.logo-wrap span{
+color:#111;
+}
 :root{--orange:#ff6a00;--orange2:#ff9a3c;--black:#111;--muted:#686868;--line:#f1dfcf}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#fffaf5,#fff);color:#1f1f1f}
@@ -61,7 +90,10 @@ footer{text-align:center;padding:46px 0;color:var(--muted);font-weight:700}
 <body>
 <main class="page">
 <header>
-<a href="#" class="brand">post<span>manager</span></a>
+<a href="#" class="brand logo-wrap">
+  <div class="logo-icon">C</div>
+  <span>carrosselo</span>
+</a>
 <a href="#gerador" class="btn">Começar</a>
 </header>
 
