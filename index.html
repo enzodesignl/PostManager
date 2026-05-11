@@ -980,65 +980,102 @@
     }
 
     if (form) {
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
+     form.addEventListener("submit", async function(e) {
 
-        const tema = document.getElementById("tema").value;
-        const nicho = document.getElementById("nicho").value;
-        const objetivo = document.getElementById("objetivo").value;
+  e.preventDefault();
 
-        resultado.innerHTML =
-          '<h2>Carrossel visual pronto</h2>' +
+  const tema = document.getElementById("tema").value;
+  const nicho = document.getElementById("nicho").value;
+  const objetivo = document.getElementById("objetivo").value;
 
-          '<div class="export-actions">' +
-            '<button type="button" onclick="baixarComoHTML()">Baixar prévia em HTML</button>' +
-          '</div>' +
+  resultado.innerHTML = `
+    <h2>Gerando carrossel...</h2>
+  `;
 
-          '<div class="ready-carousel">' +
+  try {
 
-            '<article class="ready-slide dark">' +
-              '<div>' +
-                '<small>Slide 1</small>' +
-                '<h3>' + tema + '</h3>' +
-                '<p>Um hook visual forte para chamar atenção do público de ' + nicho + '.</p>' +
-                imagemHTML(1) +
-              '</div>' +
-              '<b>postmanager</b>' +
-            '</article>' +
+    const resposta = await fetch(
+      "/api/gerar-carrossel",
+      {
+        method: "POST",
 
-            '<article class="ready-slide">' +
-              '<div>' +
-                '<small>Slide 2</small>' +
-                '<h3>O problema que poucos percebem.</h3>' +
-                '<p>Mostre o erro principal que impede esse público de avançar.</p>' +
-                imagemHTML(2) +
-              '</div>' +
-              '<b>postmanager</b>' +
-            '</article>' +
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-            '<article class="ready-slide">' +
-              '<div>' +
-                '<small>Slide 3</small>' +
-                '<h3>A solução precisa ser clara.</h3>' +
-                '<p>Organize a mensagem com visual limpo, contraste e foco em ação.</p>' +
-                imagemHTML(3) +
-              '</div>' +
-              '<b>' + objetivo + '</b>' +
-            '</article>' +
+        body: JSON.stringify({
+          tema,
+          nicho,
+          objetivo
+        })
+      }
+    );
 
-            '<article class="ready-slide dark">' +
-              '<div>' +
-                '<small>Slide 4</small>' +
-                '<h3>Pronto para postar.</h3>' +
-                '<p>Texto, imagem, hierarquia e chamada final em um carrossel visual.</p>' +
-                imagemHTML(4) +
-              '</div>' +
-              '<b>Chame no direct</b>' +
-            '</article>' +
+    const data = await resposta.json();
 
-          '</div>';
-      });
+    if (data.erro) {
+
+      resultado.innerHTML = `
+        <div class="ready-slide dark">
+          <h3>Erro</h3>
+          <p>${data.erro}</p>
+        </div>
+      `;
+
+      return;
     }
-  </script>
-</body>
-</html>
+
+    const respostaIA = JSON.parse(data.resultado);
+
+    resultado.innerHTML = `
+      <h2>Carrossel gerado</h2>
+
+      <div class="ready-carousel">
+
+        ${respostaIA.slides.map((slide, index) => `
+
+          <article class="ready-slide ${index % 2 === 0 ? "dark" : ""}">
+
+            <div>
+
+              <small>
+                Slide ${index + 1}
+              </small>
+
+              <h3>
+                ${slide.titulo}
+              </h3>
+
+              <p>
+                ${slide.texto}
+              </p>
+
+              <b>
+                ${slide.direcaoVisual}
+              </b>
+
+            </div>
+
+          </article>
+
+        `).join("")}
+
+      </div>
+    `;
+
+  } catch (erro) {
+
+    resultado.innerHTML = `
+      <div class="ready-slide dark">
+        <h3>Erro</h3>
+        <p>
+          Não foi possível conectar à IA.
+        </p>
+      </div>
+    `;
+
+    console.log(erro);
+
+  }
+
+});
